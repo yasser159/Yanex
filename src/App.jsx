@@ -14,6 +14,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 const COVER_BACKGROUND_GIF =
   '/dna-background.gif'
+const COVER_BACKGROUND_VIDEO = '/dna-animation.webm'
 
 function FirebaseConfigWarning({ message }) {
   return (
@@ -32,7 +33,10 @@ function App() {
   const { user, loading, login, register, loginWithGoogle, logout } = useAuth()
   const [activeTab, setActiveTab] = useState('profile')
   const [showGuestDiagnostics, setShowGuestDiagnostics] = useState(false)
+  const [backgroundVideoReady, setBackgroundVideoReady] = useState(false)
+  const [backgroundVideoFailed, setBackgroundVideoFailed] = useState(false)
   const hasRunIntroMotion = useRef(false)
+  const backgroundVideoRef = useRef(null)
 
   useEffect(() => {
     if (hasRunIntroMotion.current) {
@@ -182,8 +186,37 @@ function App() {
   return (
     <main className="relative min-h-screen overflow-hidden text-white">
       <div aria-hidden="true" className="cover-background-rotate absolute inset-0">
+        <video
+          ref={backgroundVideoRef}
+          className="cover-background-video absolute inset-0"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          onLoadedMetadata={() => {
+            if (backgroundVideoRef.current) {
+              backgroundVideoRef.current.playbackRate = 0.7
+            }
+          }}
+          onCanPlay={() => {
+            setBackgroundVideoReady(true)
+            logger.info('ui.background.video.ready', {
+              src: COVER_BACKGROUND_VIDEO,
+              playbackRate: backgroundVideoRef.current?.playbackRate ?? 1,
+            })
+          }}
+          onError={() => {
+            setBackgroundVideoFailed(true)
+            logger.warn('ui.background.video.failed', { src: COVER_BACKGROUND_VIDEO })
+          }}
+        >
+          <source src={COVER_BACKGROUND_VIDEO} type="video/webm" />
+        </video>
         <div
-          className="cover-background absolute inset-0"
+          className={`cover-background absolute inset-0 ${
+            backgroundVideoReady && !backgroundVideoFailed ? 'cover-background-hidden' : ''
+          }`}
           style={{ backgroundImage: `url(${COVER_BACKGROUND_GIF})` }}
         />
       </div>
@@ -319,7 +352,7 @@ function App() {
         </section>
 
         <footer className="mx-auto w-full max-w-5xl py-3 text-center text-sm text-slate-100/80">
-          Inspired by Bootstrap Cover, powered by Firebase and React.
+          Imagined &amp; founded by Yan Xing, MSc
         </footer>
       </div>
     </main>
