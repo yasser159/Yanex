@@ -155,6 +155,7 @@ function App() {
   function scrollToAuth() {
     const authPanel = document.getElementById('auth-panel')
     if (authPanel) {
+      logger.info('ui.auth.scroll_to_panel', { trigger: 'start_now' })
       authPanel.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }
@@ -275,7 +276,7 @@ function App() {
             onValueChange={setActiveTab}
             className="cover-top-tabs animate-fade-up mx-auto mt-1 w-full max-w-5xl"
           >
-            <TabsList variant="line" className="flex w-full flex-wrap justify-center gap-4 md:justify-end">
+            <TabsList className="cover-tabs-list flex w-full flex-wrap justify-center gap-4 md:justify-end">
               {authenticatedTabs.map((tab) => (
                 <TabsTrigger
                   key={tab.id}
@@ -289,8 +290,8 @@ function App() {
           </Tabs>
         ) : null}
 
-        <section className="mx-auto flex w-full max-w-5xl flex-1 items-center">
-          {!firebaseStatus.ready ? (
+        {!firebaseStatus.ready ? (
+          <section className="mx-auto flex w-full max-w-5xl flex-1 items-center">
             <div className="animate-fade-up cover-glass w-full space-y-4 rounded-3xl p-6 md:p-8">
               <h2 className="text-3xl font-semibold">Firebase setup required</h2>
               <FirebaseConfigWarning
@@ -298,42 +299,45 @@ function App() {
               />
               <DiagnosticsScreen />
             </div>
-          ) : loading ? (
+          </section>
+        ) : loading ? (
+          <section className="mx-auto flex w-full max-w-5xl flex-1 items-center">
             <div className="animate-fade-up cover-glass w-full rounded-3xl p-8 text-center">
               <p className="text-lg text-slate-100">Checking authentication state...</p>
             </div>
-          ) : user ? (
+          </section>
+        ) : user ? (
+          <section className="mx-auto flex w-full max-w-5xl flex-1 items-center">
             <div className="animate-fade-up cover-glass tab-panel-animate w-full space-y-6 rounded-3xl p-6 md:p-8">
               <div key={activeTab} className="tab-content-transition">
                 {renderAuthenticatedTab()}
               </div>
             </div>
-          ) : (
-            <div className="w-full space-y-8 text-center">
+          </section>
+        ) : (
+          <div className="mx-auto w-full max-w-5xl">
+            <section className="flex min-h-[calc(100vh-9rem)] items-center justify-center text-center">
               <article className="animate-fade-up mx-auto max-w-3xl">
-                <h2 className="animate-pop-in hero-title text-4xl font-semibold leading-tight md:text-6xl">Cover your DNA insights in real time</h2>
-                <p className="animate-fade-up mx-auto mt-4 max-w-2xl text-base text-slate-100 md:text-xl">
-                  Yanex tracks DNA marker thresholds, keeps profile updates synced, and exposes every system move through diagnostics logs.
+                <h2 className="animate-pop-in hero-title text-4xl font-semibold leading-tight md:text-6xl">
+                  DNA checking service
+                </h2>
+                <p className="animate-fade-up mx-auto mt-4 max-w-xl text-base text-slate-100/90 md:text-lg">
+                  Minimal, fast, and focused.
                 </p>
-                <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                <div className="mt-8 flex items-center justify-center">
                   <button
                     type="button"
                     onClick={scrollToAuth}
-                    className="animate-pop-in magnetic cool-cta rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-200"
+                    className="animate-pop-in magnetic cool-cta rounded-full bg-white px-8 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-200"
                   >
                     Start Now
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowGuestDiagnostics((currentValue) => !currentValue)}
-                    className="animate-pop-in magnetic cool-cta rounded-full border border-white/50 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/15"
-                  >
-                    {showGuestDiagnostics ? 'Hide Diagnostics' : 'View Diagnostics'}
-                  </button>
                 </div>
               </article>
+            </section>
 
-              <div id="auth-panel" className="animate-fade-up mx-auto w-full max-w-xl">
+            <section id="auth-panel" className="pb-8 pt-6 md:pb-12 md:pt-8">
+              <div className="animate-fade-up mx-auto w-full max-w-xl">
                 <AuthScreen
                   onLogin={login}
                   onRegister={register}
@@ -342,14 +346,24 @@ function App() {
                 />
               </div>
 
+              <div className="mt-6 flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => setShowGuestDiagnostics((currentValue) => !currentValue)}
+                  className="animate-pop-in magnetic cool-cta rounded-full border border-white/50 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/15"
+                >
+                  {showGuestDiagnostics ? 'Hide Diagnostics' : 'View Diagnostics'}
+                </button>
+              </div>
+
               {showGuestDiagnostics ? (
-                <div className="animate-fade-up tab-panel-animate mx-auto w-full max-w-4xl text-left">
+                <div className="animate-fade-up tab-panel-animate mx-auto mt-8 w-full max-w-4xl text-left">
                   <DiagnosticsScreen />
                 </div>
               ) : null}
-            </div>
-          )}
-        </section>
+            </section>
+          </div>
+        )}
 
         <footer className="mx-auto w-full max-w-5xl py-3 text-center text-sm text-slate-100/80">
           Imagined &amp; founded by Yan Xing, MSc

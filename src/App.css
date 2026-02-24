@@ -82,31 +82,44 @@
 }
 
 .cover-top-tabs {
-  border-bottom: 1px solid rgba(148, 163, 184, 0.35);
-  padding-bottom: 0.45rem;
+  padding-bottom: 0.25rem;
+}
+
+.cover-tabs-list {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0;
 }
 
 .cover-tab-btn {
   border: 0;
-  border-bottom: 0.22rem solid transparent;
+  border-bottom: 0.2rem solid transparent;
+  border-radius: 0;
   background: transparent;
-  color: rgba(241, 245, 249, 0.74);
-  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.95rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  padding: 0.35rem 0.2rem;
-  text-transform: uppercase;
-  transition: color 240ms ease, border-color 240ms ease, transform 240ms ease;
+  letter-spacing: 0.01em;
+  padding: 0.25rem 0;
+  text-transform: none;
+  transition: color 220ms ease, border-color 220ms ease;
 }
 
 .cover-tab-btn:hover {
-  color: rgba(255, 255, 255, 0.94);
-  border-bottom-color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.92);
+  border-bottom-color: rgba(255, 255, 255, 0.35);
 }
 
 .cover-tab-active {
   color: #ffffff;
   border-bottom-color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .cover-tab-btn {
+    flex: 0 0 auto;
+  }
 }
 
 .tab-content-transition {
