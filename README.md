@@ -2,6 +2,7 @@
 
 React + Firebase starter with:
 - Email/password authentication
+- Google sign-in authentication
 - Firestore profile storage
 - Structured diagnostics logging + in-app Diagnostics screen
 
@@ -20,6 +21,10 @@ cp .env.example .env.local
 ```
 
 Fill values from your Firebase project settings.
+
+Enable auth providers in Firebase Console:
+- Authentication -> Sign-in method -> Email/Password
+- Authentication -> Sign-in method -> Google
 
 ## 3) Run
 

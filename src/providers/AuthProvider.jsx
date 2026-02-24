@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
   loginWithEmailPassword,
+  loginWithGoogle,
   logout,
   registerWithEmailPassword,
   subscribeToAuthState,
@@ -36,7 +37,9 @@ export function AuthProvider({ children }) {
         try {
           return await loginWithEmailPassword(email, password)
         } catch (error) {
+          const errorCode = typeof error === 'object' && error !== null ? error.code : 'unknown'
           logger.error('auth.login.failed', {
+            code: errorCode,
             message: error instanceof Error ? error.message : 'Unknown login error',
           })
           throw error
@@ -46,8 +49,22 @@ export function AuthProvider({ children }) {
         try {
           return await registerWithEmailPassword(email, password)
         } catch (error) {
+          const errorCode = typeof error === 'object' && error !== null ? error.code : 'unknown'
           logger.error('auth.register.failed', {
+            code: errorCode,
             message: error instanceof Error ? error.message : 'Unknown registration error',
+          })
+          throw error
+        }
+      },
+      async loginWithGoogle() {
+        try {
+          return await loginWithGoogle()
+        } catch (error) {
+          const errorCode = typeof error === 'object' && error !== null ? error.code : 'unknown'
+          logger.error('auth.google.login.failed', {
+            code: errorCode,
+            message: error instanceof Error ? error.message : 'Unknown google login error',
           })
           throw error
         }
