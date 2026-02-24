@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "yanex-d2d34",
+    "staging": "yanex-d2d34"
+  },
+  "targets": {},
+  "etags": {}
+}

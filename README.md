@@ -1,16 +1,56 @@
-# React + Vite
+# Yanex
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + Firebase starter with:
+- Email/password authentication
+- Firestore profile storage
+- Structured diagnostics logging + in-app Diagnostics screen
 
-Currently, two official plugins are available:
+## 1) Install
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```bash
+npm install
+```
 
-## React Compiler
+## 2) Configure Firebase
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Copy env template:
 
-## Expanding the ESLint configuration
+```bash
+cp .env.example .env.local
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Fill values from your Firebase project settings.
+
+## 3) Run
+
+```bash
+npm run dev
+```
+
+## 4) Firebase Hosting
+
+Set your Firebase project id in `.firebaserc`:
+
+```bash
+firebase use --add
+```
+
+Deploy:
+
+```bash
+npm run deploy:hosting
+```
+
+Optional local hosting emulator:
+
+```bash
+npm run hosting:emulate
+```
+
+## Architecture
+
+- `src/core/*`: core services (firebase, auth, db, logging, diagnostics) with no React dependency.
+- `src/providers/*`: React context wiring.
+- `src/screens/*`: UI-only views.
+
+Core services emit verbose structured logs to console. The Diagnostics screen subscribes to the same logging stream for timeline inspection.
