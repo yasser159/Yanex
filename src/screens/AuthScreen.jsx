@@ -70,7 +70,7 @@ export default function AuthScreen({ onLogin, onRegister, onGoogleLogin, busy })
 
   return (
     <section className="mx-auto w-full max-w-md">
-      <div className="relative overflow-hidden rounded-2xl border border-white/35 bg-black/35 p-6 shadow-2xl backdrop-blur-md">
+      <div className="relative overflow-hidden rounded-3xl border border-white/20 bg-slate-950/35 p-6 backdrop-blur-md">
 
         <input
           id="email"
@@ -93,12 +93,12 @@ export default function AuthScreen({ onLogin, onRegister, onGoogleLogin, busy })
         {errorMessage ? <p className="mb-2 text-center text-sm text-rose-300">{errorMessage}</p> : null}
         {infoMessage ? <p className="mb-2 text-center text-sm text-emerald-300">{infoMessage}</p> : null}
 
-        <div className="mt-3 grid grid-cols-3 gap-2">
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
           <button
             disabled={busy || submitting}
             type="button"
             onClick={() => runAction(onLogin)}
-            className="rounded border border-white bg-transparent px-3 py-2 text-sm font-semibold text-white transition hover:bg-white hover:text-black disabled:opacity-50"
+            className="min-w-[104px] rounded-full border border-white/45 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white hover:text-slate-950 disabled:opacity-50"
           >
             Login
           </button>
@@ -106,7 +106,7 @@ export default function AuthScreen({ onLogin, onRegister, onGoogleLogin, busy })
             disabled={busy || submitting}
             type="button"
             onClick={() => runAction(onRegister)}
-            className="rounded border border-white/65 bg-transparent px-3 py-2 text-sm font-semibold text-white transition hover:bg-white hover:text-black disabled:opacity-50"
+            className="min-w-[104px] rounded-full border border-white/35 bg-transparent px-4 py-2 text-sm font-semibold text-white transition hover:bg-white hover:text-slate-950 disabled:opacity-50"
           >
             Register
           </button>
@@ -114,7 +114,7 @@ export default function AuthScreen({ onLogin, onRegister, onGoogleLogin, busy })
             disabled={busy || submitting}
             type="button"
             onClick={handleGoogleLogin}
-            className="rounded border border-white/65 bg-transparent px-3 py-2 text-sm font-semibold text-white transition hover:bg-white hover:text-black disabled:opacity-50"
+            className="min-w-[170px] rounded-full border border-cyan-200/50 bg-cyan-300/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white hover:text-slate-950 disabled:opacity-50"
           >
             Login with Google
           </button>

@@ -15,6 +15,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 const COVER_BACKGROUND_GIF =
   '/dna-background.gif'
 const COVER_BACKGROUND_VIDEO = '/dna-animation.webm'
+const BOTTOM_BACKGROUND_VIDEO = '/dna-animation-2.mp4'
 
 function FirebaseConfigWarning({ message }) {
   return (
@@ -24,6 +25,85 @@ function FirebaseConfigWarning({ message }) {
       <p className="mt-2 text-sm">
         Create a <code>.env.local</code> using <code>.env.example</code> and restart the dev server.
       </p>
+    </section>
+  )
+}
+
+function BootstrapHorizontalSections({ onPrimaryAction }) {
+  const sections = [
+    {
+      id: 'section-upload',
+      eyebrow: 'Upload',
+      title: 'Drag in your DNA data without friction',
+      description:
+        'A clean intake flow that feels instant. Think of it like airport express check-in: less standing around, more moving forward.',
+      actionLabel: 'Try Upload Flow',
+      accent: 'from-emerald-300/20 to-cyan-300/20',
+    },
+    {
+      id: 'section-search',
+      eyebrow: 'Search',
+      title: 'Run precise matches across your library',
+      description:
+        'Search behaves like a spotlight in a dark room. You point it once and hidden details step into view, fast and clear.',
+      actionLabel: 'Open Search Setup',
+      accent: 'from-sky-300/20 to-blue-300/20',
+    },
+    {
+      id: 'section-diagnostics',
+      eyebrow: 'Diagnostics',
+      title: 'See the full execution story in one timeline',
+      description:
+        'When something acts weird, logs become your black box recorder. You get chronological signals instead of guesswork.',
+      actionLabel: 'Inspect Logs',
+      accent: 'from-teal-300/20 to-indigo-300/20',
+    },
+  ]
+
+  return (
+    <section className="space-y-6 pb-8 pt-2 md:space-y-8 md:pb-12">
+      {sections.map((section, index) => (
+        <article
+          key={section.id}
+          className="animate-fade-up cover-glass overflow-hidden rounded-3xl p-5 md:p-7"
+        >
+          <div className="grid items-center gap-6 md:grid-cols-2 md:gap-10">
+            <div className={index % 2 === 1 ? 'md:order-2' : ''}>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-100/80">
+                {section.eyebrow}
+              </p>
+              <h3 className="mt-2 text-2xl font-semibold text-white md:text-3xl">
+                {section.title}
+              </h3>
+              <p className="mt-3 max-w-xl text-sm leading-7 text-slate-100/85 md:text-base">
+                {section.description}
+              </p>
+              <button
+                type="button"
+                onClick={onPrimaryAction}
+                className="magnetic cool-cta mt-5 rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-200"
+              >
+                {section.actionLabel}
+              </button>
+            </div>
+
+            <div className={index % 2 === 1 ? 'md:order-1' : ''}>
+              <div
+                className={`relative h-44 rounded-2xl border border-white/15 bg-gradient-to-br ${section.accent} p-4 md:h-52`}
+              >
+                <div className="absolute right-4 top-4 text-xs font-medium uppercase tracking-[0.14em] text-white/70">
+                  Bootstrap style
+                </div>
+                <div className="mt-10 space-y-3">
+                  <div className="h-2.5 w-2/3 rounded-full bg-white/70" />
+                  <div className="h-2.5 w-1/2 rounded-full bg-white/45" />
+                  <div className="h-2.5 w-3/4 rounded-full bg-white/35" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      ))}
     </section>
   )
 }
@@ -155,8 +235,26 @@ function App() {
   function scrollToAuth() {
     const authPanel = document.getElementById('auth-panel')
     if (authPanel) {
+      const reduceMotion =
+        typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      const navOffset = 96
+      const targetY = Math.max(
+        0,
+        window.scrollY + authPanel.getBoundingClientRect().top - navOffset
+      )
+
       logger.info('ui.auth.scroll_to_panel', { trigger: 'start_now' })
-      authPanel.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      if (reduceMotion) {
+        window.scrollTo({ top: targetY, behavior: 'auto' })
+        return
+      }
+
+      anime({
+        targets: [document.scrollingElement || document.documentElement],
+        scrollTop: targetY,
+        duration: 950,
+        easing: 'easeInOutQuart',
+      })
     }
   }
 
@@ -185,8 +283,8 @@ function App() {
   ]
 
   return (
-    <main className="relative min-h-screen overflow-hidden text-white">
-      <div aria-hidden="true" className="cover-background-rotate absolute inset-0">
+    <main className="relative min-h-screen overflow-x-hidden bg-black text-white">
+      <div aria-hidden="true" className="cover-background-rotate pointer-events-none absolute inset-x-0 top-0 h-screen">
         <video
           ref={backgroundVideoRef}
           className="cover-background-video absolute inset-0"
@@ -221,14 +319,16 @@ function App() {
           style={{ backgroundImage: `url(${COVER_BACKGROUND_GIF})` }}
         />
       </div>
-      <div aria-hidden="true" className="cover-overlay absolute inset-0" />
-      <div aria-hidden="true" className="cover-scanlines absolute inset-0" />
-      <div aria-hidden="true" className="cover-orb cover-orb-1" />
-      <div aria-hidden="true" className="cover-orb cover-orb-2" />
-      <div aria-hidden="true" className="cover-orb cover-orb-3" />
+      <div aria-hidden="true" className="cover-overlay pointer-events-none absolute inset-x-0 top-0 h-screen" />
+      <div aria-hidden="true" className="cover-scanlines pointer-events-none absolute inset-x-0 top-0 h-screen" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-screen overflow-hidden">
+        <div className="cover-orb cover-orb-1" />
+        <div className="cover-orb cover-orb-2" />
+        <div className="cover-orb cover-orb-3" />
+      </div>
 
       <div className="relative z-10 flex min-h-screen flex-col p-6">
-        <header className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 py-2">
+        <header className="sticky top-3 z-40 mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/15 bg-slate-950/55 px-4 py-3 backdrop-blur-md">
           <div className="animate-fade-up">
             <h1 className="animate-pop-in brand-title text-2xl md:text-3xl">Yanex</h1>
             <p className="text-xs uppercase tracking-[0.25em] text-slate-300/90">
@@ -315,54 +415,97 @@ function App() {
             </div>
           </section>
         ) : (
-          <div className="mx-auto w-full max-w-5xl">
-            <section className="flex min-h-[calc(100vh-9rem)] items-center justify-center text-center">
-              <article className="animate-fade-up mx-auto max-w-3xl">
-                <h2 className="animate-pop-in hero-title text-4xl font-semibold leading-tight md:text-6xl">
-                  DNA checking service
-                </h2>
-                <p className="animate-fade-up mx-auto mt-4 max-w-xl text-base text-slate-100/90 md:text-lg">
-                  Minimal, fast, and focused.
-                </p>
-                <div className="mt-8 flex items-center justify-center">
-                  <button
-                    type="button"
-                    onClick={scrollToAuth}
-                    className="animate-pop-in magnetic cool-cta rounded-full bg-white px-8 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-200"
-                  >
-                    Start Now
-                  </button>
-                </div>
-              </article>
+          <>
+            <div className="mx-auto w-full max-w-5xl">
+              <section className="flex min-h-[calc(100vh-9rem)] items-center justify-center text-center">
+                <article className="animate-fade-up mx-auto max-w-3xl">
+                  <h2 className="animate-pop-in hero-title text-4xl font-semibold leading-tight md:text-6xl">
+                    DNA checking service
+                  </h2>
+                  <p className="animate-fade-up mx-auto mt-4 max-w-xl text-base text-slate-100/90 md:text-lg">
+                    Minimal, fast, and focused.
+                  </p>
+                  <div className="mt-8 flex items-center justify-center">
+                    <button
+                      type="button"
+                      onClick={scrollToAuth}
+                      className="animate-pop-in magnetic cool-cta rounded-full bg-white px-8 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-200"
+                    >
+                      Start Now
+                    </button>
+                  </div>
+                </article>
+              </section>
+            </div>
+
+            <div
+              aria-hidden="true"
+              className="pointer-events-none relative left-1/2 right-1/2 -mt-20 h-56 w-screen -translate-x-1/2 bg-gradient-to-b from-black/0 via-black/65 to-black"
+            />
+
+            <section className="relative left-1/2 right-1/2 -mt-px min-h-[72vh] w-screen -translate-x-1/2 bg-black py-10 md:min-h-[78vh] md:py-14">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-gradient-to-b from-black via-black/65 to-black/0 md:h-72"
+              />
+              <div className="relative z-10 mx-auto w-full max-w-5xl px-6">
+                <BootstrapHorizontalSections onPrimaryAction={scrollToAuth} />
+              </div>
             </section>
 
-            <section id="auth-panel" className="pb-8 pt-6 md:pb-12 md:pt-8">
-              <div className="animate-fade-up mx-auto w-full max-w-xl">
-                <AuthScreen
-                  onLogin={login}
-                  onRegister={register}
-                  onGoogleLogin={loginWithGoogle}
-                  busy={loading}
-                />
-              </div>
+            <section className="relative left-1/2 right-1/2 min-h-screen w-screen -translate-x-1/2 overflow-hidden bg-black/70 px-6 py-8 md:py-10">
+              <video
+                className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="auto"
+                onCanPlay={() => {
+                  logger.info('ui.background.bottom_video.ready', { src: BOTTOM_BACKGROUND_VIDEO })
+                }}
+                onError={() => {
+                  logger.warn('ui.background.bottom_video.failed', { src: BOTTOM_BACKGROUND_VIDEO })
+                }}
+              >
+                <source src={BOTTOM_BACKGROUND_VIDEO} type="video/mp4" />
+              </video>
+              <div aria-hidden="true" className="absolute inset-0 bg-slate-950/55" />
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 top-0 h-56 bg-gradient-to-b from-black to-black/45 to-transparent md:h-72"
+              />
 
-              <div className="mt-6 flex justify-center">
-                <button
-                  type="button"
-                  onClick={() => setShowGuestDiagnostics((currentValue) => !currentValue)}
-                  className="animate-pop-in magnetic cool-cta rounded-full border border-white/50 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/15"
-                >
-                  {showGuestDiagnostics ? 'Hide Diagnostics' : 'View Diagnostics'}
-                </button>
-              </div>
+              <div className="relative z-10 mx-auto w-full max-w-5xl">
+                <section id="auth-panel" className="scroll-mt-28 pb-2 pt-2 md:pb-4 md:pt-4">
+                  <div className="animate-fade-up mx-auto w-full max-w-xl">
+                    <AuthScreen
+                      onLogin={login}
+                      onRegister={register}
+                      onGoogleLogin={loginWithGoogle}
+                      busy={loading}
+                    />
+                  </div>
 
-              {showGuestDiagnostics ? (
-                <div className="animate-fade-up tab-panel-animate mx-auto mt-8 w-full max-w-4xl text-left">
-                  <DiagnosticsScreen />
-                </div>
-              ) : null}
+                  <div className="mt-6 flex justify-center">
+                    <button
+                      type="button"
+                      onClick={() => setShowGuestDiagnostics((currentValue) => !currentValue)}
+                      className="animate-pop-in magnetic cool-cta rounded-full border border-white/50 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/15"
+                    >
+                      {showGuestDiagnostics ? 'Hide Diagnostics' : 'View Diagnostics'}
+                    </button>
+                  </div>
+
+                  {showGuestDiagnostics ? (
+                    <div className="animate-fade-up tab-panel-animate mx-auto mt-8 w-full max-w-4xl text-left">
+                      <DiagnosticsScreen />
+                    </div>
+                  ) : null}
+                </section>
+              </div>
             </section>
-          </div>
+          </>
         )}
 
         <footer className="mx-auto w-full max-w-5xl py-3 text-center text-sm text-slate-100/80">
