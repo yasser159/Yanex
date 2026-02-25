@@ -328,7 +328,7 @@ function App() {
       </div>
 
       <div className="relative z-10 flex min-h-screen flex-col p-6">
-        <header className="sticky top-3 z-40 mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/15 bg-slate-950/55 px-4 py-3 backdrop-blur-md">
+        <header className="sticky top-3 z-40 mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3">
           <div className="animate-fade-up">
             <h1 className="animate-pop-in brand-title text-2xl md:text-3xl">Yanex</h1>
             <p className="text-xs uppercase tracking-[0.25em] text-slate-300/90">
@@ -337,15 +337,6 @@ function App() {
           </div>
 
           <nav className="animate-fade-up flex items-center gap-2">
-            {!user ? (
-              <button
-                type="button"
-                onClick={scrollToAuth}
-                className="animate-pop-in rounded-full border border-white/40 px-4 py-1.5 text-sm font-medium text-white transition hover:bg-white/20"
-              >
-                Get Started
-              </button>
-            ) : null}
             {user ? (
               <button
                 type="button"
