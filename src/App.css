@@ -206,3 +206,20 @@
     animation: none !important;
   }
 }
+
+.auth-transparent-input,
+.auth-transparent-input:focus,
+.auth-transparent-input:active {
+  background: transparent !important;
+  color: #ffffff !important;
+}
+
+.auth-transparent-input:-webkit-autofill,
+.auth-transparent-input:-webkit-autofill:hover,
+.auth-transparent-input:-webkit-autofill:focus,
+.auth-transparent-input:-webkit-autofill:active {
+  -webkit-text-fill-color: #ffffff !important;
+  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+  background-color: transparent !important;
+  transition: background-color 99999s ease-in-out 0s;
+}

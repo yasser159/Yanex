@@ -1,36 +1,38 @@
 import { useState } from 'react'
+import { MESSAGES, t } from '../i18n'
 
-function mapFirebaseAuthError(error) {
+function mapFirebaseAuthError(error, copy) {
   const errorCode = typeof error === 'object' && error !== null ? error.code : ''
   const suffix = errorCode ? ` (code: ${errorCode})` : ''
 
   switch (errorCode) {
     case 'auth/invalid-credential':
-      return `Invalid email or password.${suffix}`
+      return `${copy.errors.invalidCredential}${suffix}`
     case 'auth/user-not-found':
-      return `No account found with that email.${suffix}`
+      return `${copy.errors.userNotFound}${suffix}`
     case 'auth/wrong-password':
-      return `Wrong password. Try again.${suffix}`
+      return `${copy.errors.wrongPassword}${suffix}`
     case 'auth/email-already-in-use':
-      return `This email is already in use.${suffix}`
+      return `${copy.errors.emailInUse}${suffix}`
     case 'auth/weak-password':
-      return `Password is too weak. Use at least 6 characters.${suffix}`
+      return `${copy.errors.weakPassword}${suffix}`
     case 'auth/popup-closed-by-user':
-      return `Google sign-in popup was closed before completion.${suffix}`
+      return `${copy.errors.popupClosed}${suffix}`
     case 'auth/popup-blocked':
-      return `Popup was blocked. We started a redirect flow instead.${suffix}`
+      return `${copy.errors.popupBlocked}${suffix}`
     case 'auth/unauthorized-domain':
-      return `Current domain is not authorized in Firebase Auth settings.${suffix}`
+      return `${copy.errors.unauthorizedDomain}${suffix}`
     case 'auth/operation-not-allowed':
-      return `Google sign-in is not enabled in Firebase Console.${suffix}`
+      return `${copy.errors.operationNotAllowed}${suffix}`
     case 'auth/configuration-not-found':
-      return `Google auth configuration is missing in Firebase Console (enable provider + support email).${suffix}`
+      return `${copy.errors.configNotFound}${suffix}`
     default:
-      return error instanceof Error ? `${error.message}${suffix}` : `Authentication failed${suffix}`
+      return error instanceof Error ? `${error.message}${suffix}` : `${copy.authFailed}${suffix}`
   }
 }
 
-export default function AuthScreen({ onLogin, onRegister, onGoogleLogin, busy }) {
+export default function AuthScreen({ onLogin, onRegister, onGoogleLogin, busy, language = 'en' }) {
+  const copy = MESSAGES[language]?.auth ?? MESSAGES.en.auth
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
@@ -46,7 +48,7 @@ export default function AuthScreen({ onLogin, onRegister, onGoogleLogin, busy })
     try {
       await action(email, password)
     } catch (error) {
-      setErrorMessage(mapFirebaseAuthError(error))
+      setErrorMessage(mapFirebaseAuthError(error, copy))
     } finally {
       setSubmitting(false)
     }
@@ -59,10 +61,10 @@ export default function AuthScreen({ onLogin, onRegister, onGoogleLogin, busy })
     try {
       const user = await onGoogleLogin()
       if (!user) {
-        setInfoMessage('Redirecting to Google sign-in...')
+        setInfoMessage(t(language, 'auth.redirectingGoogle'))
       }
     } catch (error) {
-      setErrorMessage(mapFirebaseAuthError(error))
+      setErrorMessage(mapFirebaseAuthError(error, copy))
     } finally {
       setSubmitting(false)
     }
@@ -70,14 +72,14 @@ export default function AuthScreen({ onLogin, onRegister, onGoogleLogin, busy })
 
   return (
     <section className="mx-auto w-full max-w-md">
-      <div className="relative overflow-hidden rounded-3xl border border-white/20 bg-slate-950/35 p-6 backdrop-blur-md">
+      <div className="relative overflow-hidden rounded-3xl border border-white/20 bg-transparent p-6">
 
         <input
           id="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          className="mb-3 w-full rounded border border-white/65 bg-transparent px-3 py-2 text-white placeholder-white/70 outline-none transition focus:bg-white focus:text-black"
-          placeholder="Email"
+          className="auth-transparent-input mb-3 w-full rounded border border-white/65 bg-transparent px-3 py-2 text-white placeholder-white/70 outline-none transition"
+          placeholder={copy.email}
           type="email"
         />
 
@@ -85,8 +87,8 @@ export default function AuthScreen({ onLogin, onRegister, onGoogleLogin, busy })
           id="password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
-          className="mb-3 w-full rounded border border-white/65 bg-transparent px-3 py-2 text-white placeholder-white/70 outline-none transition focus:bg-white focus:text-black"
-          placeholder="Password"
+          className="auth-transparent-input mb-3 w-full rounded border border-white/65 bg-transparent px-3 py-2 text-white placeholder-white/70 outline-none transition"
+          placeholder={copy.password}
           type="password"
         />
 
@@ -100,7 +102,7 @@ export default function AuthScreen({ onLogin, onRegister, onGoogleLogin, busy })
             onClick={() => runAction(onLogin)}
             className="min-w-[104px] rounded-full border border-white/45 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white hover:text-slate-950 disabled:opacity-50"
           >
-            Login
+            {copy.login}
           </button>
           <button
             disabled={busy || submitting}
@@ -108,7 +110,7 @@ export default function AuthScreen({ onLogin, onRegister, onGoogleLogin, busy })
             onClick={() => runAction(onRegister)}
             className="min-w-[104px] rounded-full border border-white/35 bg-transparent px-4 py-2 text-sm font-semibold text-white transition hover:bg-white hover:text-slate-950 disabled:opacity-50"
           >
-            Register
+            {copy.register}
           </button>
           <button
             disabled={busy || submitting}
@@ -116,7 +118,7 @@ export default function AuthScreen({ onLogin, onRegister, onGoogleLogin, busy })
             onClick={handleGoogleLogin}
             className="min-w-[170px] rounded-full border border-cyan-200/50 bg-cyan-300/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white hover:text-slate-950 disabled:opacity-50"
           >
-            Login with Google
+            {copy.loginGoogle}
           </button>
         </div>
 
@@ -124,12 +126,12 @@ export default function AuthScreen({ onLogin, onRegister, onGoogleLogin, busy })
           type="button"
           className="mt-4 block w-full text-center text-xs text-white/70 transition hover:text-white"
         >
-          forgot password?
+          {copy.forgotPassword}
         </button>
 
         {shouldShowHostHint ? (
           <p className="mt-3 text-center text-xs text-white/65">
-            Testing on <code>{currentHost}</code>. If Google sign-in fails, add this host to Firebase Auth authorized domains.
+            {copy.testingOn} <code>{currentHost}</code>. {copy.hostHintSuffix}
           </p>
         ) : null}
       </div>
